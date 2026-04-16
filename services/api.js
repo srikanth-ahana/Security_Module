@@ -8,19 +8,52 @@ const API_PORT = process.env.NEXT_PUBLIC_API_PORT_SECURITY || '8002';
 
 const BASE_URL = `http://${API_HOST}:${API_PORT}`;
 
+const handleResponseError = (response) => {
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      window.location.href = '/login';
+    }
+  } else if (response.status === 403) {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/unauthorized';
+    }
+  }
+};
+
+const getHeaders = async () => {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (typeof window !== 'undefined') {
+    let token = localStorage.getItem('token');
+    if (!token) {
+      const match = document.cookie.match(/(^| )token=([^;]+)/);
+      if (match) token = match[2];
+    }
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+  return headers;
+};
+
 export const api = {
   get: async (endpoint) => {
     const url = `${BASE_URL}${endpoint}`;
     console.log(`GET ${url}`);
     try {
+      const headers = await getHeaders();
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         cache: 'no-store'
       });
       if (!response.ok) {
+        handleResponseError(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
@@ -33,15 +66,15 @@ export const api = {
     const url = `${BASE_URL}${endpoint}`;
     console.log(`POST ${url}`, data);
     try {
+      const headers = await getHeaders();
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data),
         cache: 'no-store'
       });
       if (!response.ok) {
+        handleResponseError(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
@@ -54,14 +87,14 @@ export const api = {
     const url = `${BASE_URL}${endpoint}`;
     console.log(`DELETE ${url}`);
     try {
+      const headers = await getHeaders();
       const response = await fetch(url, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         cache: 'no-store'
       });
       if (!response.ok) {
+        handleResponseError(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
