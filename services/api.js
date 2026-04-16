@@ -4,7 +4,7 @@
  */
 
 const API_HOST = process.env.NEXT_PUBLIC_API_HOST || '127.0.0.1';
-const API_PORT = process.env.NEXT_PUBLIC_API_PORT_SECURITY || '8002';
+const API_PORT = process.env.NEXT_PUBLIC_API_PORT_SECURITY || '8003';
 
 const BASE_URL = `http://${API_HOST}:${API_PORT}`;
 
