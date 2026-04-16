@@ -77,9 +77,9 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-2 font-medium">Live overview of your security module.</p>
         </div>
-        <div className="mt-4 md:mt-0 px-4 py-2 rounded-full border border-blue-200 bg-blue-50/50 text-blue-700 text-sm font-semibold flex items-center shadow-sm">
-          <div className="h-2 w-2 rounded-full bg-blue-500 mr-2 animate-pulse" />
-          Live Data
+        <div>
+          <div  />
+          
         </div>
       </div>
 
